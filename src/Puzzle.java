@@ -12,14 +12,28 @@ public class Puzzle {
      */
 
     private Block[] blocks;
+    private Block combined;
 
     public Puzzle(Block b1, Block b2, Block b3, Block b4, Block b5, Block b6) {
         blocks = new Block[] {b1, b2, b3, b4, b5, b6};
+        combined = new Block();
+    }
+
+    private void assemblePuzzle() {
+        // copy every block into a single 3D array to create the superimposed puzzle arrangement
+        // TODO: set a flag if a collision between blocks is detected
+        for (int b=0; b< blocks.length; b++) {
+            for(int x=0; x<blocks.length; x++) {
+
+            }
+        }
     }
 
     public void paint(Graphics g, int originX, int originY) {
-        // superimpose all the blocks, with the correct offsets to assemble the puzzle shape
+        // superimpose all the blocks onto a new block grid,
+        // with the correct offsets to assemble the puzzle shape
         for (int b=0; b<blocks.length; b++) {
+
             blocks[b].paint(g, originX, originY, 0 , 0 , 0);
         }
     }

@@ -11,6 +11,20 @@ public class Block {
     private int[][][] blockArray;
     private int blockSize;
 
+    public Block() {
+        // create an empty 6x6x6 array
+        blockSize = 6;
+        blockArray = new int[blockSize][blockSize][blockSize];
+        // intialise empty array
+        for(int x=0; x<blockSize; x++) {
+            for(int y=0; y<blockSize; y++) {
+                for(int z=0; z<blockSize; z++) {
+                    blockArray[x][y][z] = 0;
+                }
+            }
+        }
+    }
+
     public Block(int[][][] shape) {
         /* the 2x2x4 shape array only represents the middle section of each block.
            This is the part that varies from block to block. There is a solid end-cap at the long
