@@ -1,13 +1,11 @@
 
 import java.awt.*;
 import javax.swing.*;
-import java.awt.geom.Line2D;
 
 // display blocks in isometric 3D
 class Viewer extends JComponent {
-    private int WIDTH;
-    private int HEIGHT;
-    private JFrame window;
+    private final int WIDTH;
+    private final int HEIGHT;
     private Puzzle p;
     private int originX;
     private int originY;
@@ -17,7 +15,7 @@ class Viewer extends JComponent {
         this.HEIGHT = height;
 
         // creating object of JFrame(Window popup)
-        window = new JFrame("Block Viewer");
+        JFrame window = new JFrame("Puzzle Viewer");
 
         // setting closing operation
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

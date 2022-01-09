@@ -12,10 +12,14 @@ public class Block {
     private int blockSize;
 
     public Block() {
+        initialise();
+    }
+
+    private void initialise() {
         // create an empty 6x6x6 array
         blockSize = 6;
         blockArray = new int[blockSize][blockSize][blockSize];
-        // intialise empty array
+        // initialise empty array
         for(int x=0; x<blockSize; x++) {
             for(int y=0; y<blockSize; y++) {
                 for(int z=0; z<blockSize; z++) {
@@ -31,16 +35,7 @@ public class Block {
            end of each one. This 2x2x6 block is placed in the middle of
            a 6x6x6 array, to allow easy rotation by coordinate transposition
          */
-        blockSize = 6;
-        blockArray = new int[blockSize][blockSize][blockSize];
-        // intialise empty array
-        for(int x=0; x<blockSize; x++) {
-            for(int y=0; y<blockSize; y++) {
-                for(int z=0; z<blockSize; z++) {
-                    blockArray[x][y][z] = 0;
-                }
-            }
-        }
+        initialise();
         // copy the shape array into the middle of the empty block array
         for(int x=0; x<2; x++) {
             for(int y=0; y<2; y++) {
@@ -56,57 +51,27 @@ public class Block {
         }
     }
 
-    private char getBlockState(int x, int y, int z) {
-        if (blockArray[x][y][z] == 1) {
-            return '#';
-        }
-        return '.';
+    public int get(int x, int y, int z) {
+        return blockArray[x][y][z];
     }
 
-    public void display() {
-        // print out the side, front and plan elevations
-        System.out.println("Side");  // ZY plane
-        for(int x=0; x<blockSize; x++) {
-            for(int y=0; y<blockSize; y++) {
-                for (int z=0; z<blockSize; z++) {
-                    System.out.print(getBlockState(x,y,z));
-                }
-                System.out.print("  ");
-            }
-            System.out.println();
-        }
-
-        System.out.println("Top");  // XY plane
-        for(int z=0; z<blockSize; z++) {
-            for(int y=0; y<blockSize; y++) {
-                for (int x=0; x<blockSize; x++) {
-                    System.out.print(getBlockState(x,y,z));
-                }
-                System.out.print("  ");
-            }
-            System.out.println();
-        }
-
-        System.out.println("Front");  // XZ plane
-        for(int y=0; y<blockSize; y++) {
-            for(int z=0; z<blockSize; z++) {
-                for (int x=0; x<blockSize; x++) {
-                    System.out.print(getBlockState(x,y,z));
-                }
-                System.out.print("  ");
-            }
-            System.out.println();
-        }
+    public void set(int x, int y, int z, int value) {
+        blockArray[x][y][z] = value;
     }
 
-    public void paint(Graphics g, int originX, int originY, int offsetX, int offsetY, int offsetZ) {
+    public void paint(Graphics g, int originX, int originY, int offsetX, int offsetY, int offsetZ, boolean solid) {
         for(int z=blockSize-1; z>=0; z--) {
             for (int x = 0; x < blockSize; x++) {
                 for (int y = blockSize-1; y>=0; y--) {
                     if (blockArray[x][y][z] == 1){
                         // construct and paint a cube
                         Cube cube = new Cube(originX, originY, x+offsetX, y+offsetY, z+offsetZ);
-                        cube.paint(g);
+                        cube.paint(g, solid);
+                    }
+                    if (blockArray[x][y][z] > 1){
+                        // construct and paint a cube
+                        Cube cube = new Cube(originX, originY, x+offsetX, y+offsetY, z+offsetZ);
+                        cube.paint(g, true);
                     }
                 }
             }

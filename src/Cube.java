@@ -79,14 +79,16 @@ public class Cube {
             },4);
     }
 
-    public void paint(Graphics g) {
+    public void paint(Graphics g, boolean solid) {
         // draw the cube on a supplied graphic context
-        g.setColor(Color.orange);
-        g.fillPolygon(side1);
-        g.setColor(Color.white);
-        g.fillPolygon(top);
-        g.setColor(Color.yellow);
-        g.fillPolygon(side2);
+        if (solid) {
+            g.setColor(Color.orange);
+            g.fillPolygon(side1);
+            g.setColor(Color.white);
+            g.fillPolygon(top);
+            g.setColor(Color.yellow);
+            g.fillPolygon(side2);
+        }
         g.setColor(Color.black);
         g.drawPolygon(side1);
         g.drawPolygon(top);

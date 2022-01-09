@@ -26,13 +26,50 @@ public class Main {
                         {1,1,1,1}
                 }
         });
-        b2.rotateYZ();
-        Puzzle p = new Puzzle(b1, b2, b1, b1, b1, b1);
-        Viewer view = new Viewer(500,500);
-        while (true) {
-            view.render(p, 0, 100);
+        Block b3 = new Block(new int[][][] {
+                {
+                        {1,1,1,0},
+                        {1,1,1,1}},
+                {
+                        {1,1,1,1},
+                        {1,1,1,1}
+                }
+        });
+        Block b4 = new Block(new int[][][] {
+                {
+                        {1,1,1,0},
+                        {1,1,1,1}},
+                {
+                        {1,1,1,1},
+                        {1,1,1,1}
+                }
+        });
+        Block b5 = new Block(new int[][][] {
+                {
+                        {1,1,1,0},
+                        {1,1,1,1}},
+                {
+                        {1,1,1,1},
+                        {1,1,1,1}
+                }
+        });
+        Block b6 = new Block(new int[][][] {
+                {
+                        {1,1,1,0},
+                        {1,1,1,1}},
+                {
+                        {1,1,1,1},
+                        {1,1,1,1}
+                }
+        });
+        b3.rotateYZ();
+        b4.rotateYZ();
+        b5.rotateXZ();
+        b6.rotateXZ();
+        Puzzle p = new Puzzle(b1, b2, b3, b4, b5, b6);
+        Viewer view = new Viewer(650,350);
+        view.render(p, 0, 100);
             //b1.rotateXZ();
-            Thread.sleep(800);
-        }
+//            Thread.sleep(800);
     }
 }
