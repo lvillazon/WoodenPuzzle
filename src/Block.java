@@ -51,6 +51,19 @@ public class Block {
         }
     }
 
+    public Block clone() {
+        // create a copy of this block
+        Block copy = new Block();
+        for(int x=0; x<blockSize; x++) {
+            for(int y=0; y<blockSize; y++) {
+                for(int z=0; z<blockSize; z++) {
+                    copy.set(x,y,z, get(x,y,z));
+                }
+            }
+        }
+        return copy;
+    }
+
     public int get(int x, int y, int z) {
         return blockArray[x][y][z];
     }
