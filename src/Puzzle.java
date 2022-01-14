@@ -82,7 +82,7 @@ public class Puzzle {
         blocks = new Block[solution.getBlockChromosomeLength()];
         combined = new Block();
         for(int i=0; i<solution.getBlockChromosomeLength(); i++) {
-            blocks[i] = blockSet[i];//.clone();
+            blocks[i] = blockSet[i].clone();
         }
         //TODO: rotate the blocks according to the rotation chromosome
         blocks[2].rotateYZ();
@@ -95,15 +95,13 @@ public class Puzzle {
     public int collisionCount() {
         // return the number of times two block cubes share the same point in the puzzle array
         int collisions = 0;
-        if (combined == null) {
-            assemblePuzzle();
-        }
         for(int x=0; x<blocks.length; x++) {
             for(int y=0; y<blocks.length; y++) {
                 for(int z=0; z< blocks.length; z++) {
                     if (combined.get(x, y, z) > 1) {
-                        collisions = collisions + combined.get(x, y, z) -1;
+                        collisions = collisions + combined.get(x, y, z)-1;
                     }
+                    System.out.println("block "+x+","+y+","+z+"="+ combined.get(x,y,z));
                 }
             }
         }
@@ -113,8 +111,8 @@ public class Puzzle {
     private void assemblePuzzle() {
         // copy every block into a single 3D array to create the superimposed puzzle arrangement
         // TODO: set a flag if a collision between blocks is detected
-        // copy the 2 blocks in the Z axis, blocks[0] and blocks[1]
-
+        // 1. copy the 2 blocks in the Z axis, blocks[0] and blocks[1]
+        //combined = new Block();
         for(int x=0; x<blocks.length-1; x++) {
             for(int y=0; y<blocks.length-2; y++) {
                 for(int z=0; z<blocks.length; z++) {
@@ -128,7 +126,7 @@ public class Puzzle {
             }
         }
 
-        // copy the 2 blocks in the Y axis, blocks[2] and blocks[3]
+        // 2.copy the 2 blocks in the Y axis, blocks[2] and blocks[3]
         for(int x=0; x<blocks.length-2; x++) {
             for(int y=0; y<blocks.length; y++) {
                 for(int z=1; z<blocks.length; z++) {
@@ -142,7 +140,7 @@ public class Puzzle {
             }
         }
 
-        // copy the 2 blocks in the X axis, blocks[4] and blocks[5]
+        // 3.copy the 2 blocks in the X axis, blocks[4] and blocks[5]
         for(int x=0; x<blocks.length; x++) {
             for(int y=0; y<blocks.length-1; y++) {
                 for(int z=2; z<blocks.length; z++) {

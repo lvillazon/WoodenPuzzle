@@ -65,11 +65,13 @@ public class Main {
         b4.rotateYZ();
         b5.rotateXZ();
         b6.rotateXZ();
+        /* pre GA tests
         Puzzle p1 = new Puzzle(b1, b2, b3, b4, b5, b6);
-//        Viewer view = new Viewer(650,350);
-//        view.render(p1, 0, 100);
-            //b1.rotateXZ();
-//            Thread.sleep(800);
+        Viewer view = new Viewer(650,350);
+        view.render(p1, 0, 100);
+        b1.rotateXZ();
+        Thread.sleep(800);
+         */
 
         // TEST individual code
         Individual i = new Individual();
@@ -77,15 +79,15 @@ public class Main {
         Viewer view = new Viewer(650,350);
         view.render(p2, 0, 100);
 
-/*
+
 
         // Create genetic algorithm
         GeneticAlgorithm ga = new GeneticAlgorithm(200, 0.05, .5, 5, 10);
 
         // test fitness calculation
-        //System.out.println("Tour fitness:");
-        //System.out.println(ga.calculateFitness(test));
-
+        System.out.println("Puzzle fitness:");
+        System.out.println(ga.calculateFitness(i));
+/*
         // initialise the population
         Population population = ga.initPopulation(20);
         // Evaluate initial pop
