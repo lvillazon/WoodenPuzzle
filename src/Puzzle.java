@@ -73,23 +73,32 @@ public class Puzzle {
     private int collisions;  // number of overlapping cubes in the assembled puzzle
 
     public Puzzle(Block b1, Block b2, Block b3, Block b4, Block b5, Block b6) {
-        blocks = new Block[] {b1, b2, b3, b4, b5, b6};
-        combined = new Block();
+        blocks = new Block[] {
+                b1.clone(),
+                b2.clone(),
+                b3.clone(),
+                b4.clone(),
+                b5.clone(),
+                b6.clone()};
+        blocks[2].rotateYZ();
+        blocks[3].rotateYZ();
+        blocks[4].rotateXZ();
+        blocks[5].rotateXZ();
+        assemblePuzzle();
     }
 
     public Puzzle(Individual solution) {
         // create a puzzle arrangement from a GA solution
         blocks = new Block[solution.getBlockChromosomeLength()];
-        combined = new Block();
         for(int i=0; i<solution.getBlockChromosomeLength(); i++) {
-            blocks[i] = blockSet[i];//.clone();
+            blocks[i] = blockSet[i].clone();
         }
         //TODO: rotate the blocks according to the rotation chromosome
         blocks[2].rotateYZ();
         blocks[3].rotateYZ();
         blocks[4].rotateXZ();
         blocks[5].rotateXZ();
-
+        assemblePuzzle();
     }
 
     public int collisionCount() {
@@ -115,15 +124,14 @@ public class Puzzle {
         // TODO: set a flag if a collision between blocks is detected
         // copy the 2 blocks in the Z axis, blocks[0] and blocks[1]
 
+        combined = new Block();
         for(int x=0; x<blocks.length-1; x++) {
             for(int y=0; y<blocks.length-2; y++) {
                 for(int z=0; z<blocks.length; z++) {
-                    if (blocks[0].get(x, y, z) == 1) {
-                        combined.set(x+1, y, z, combined.get(x+1,y,z)+1);
-                    }
-                    if (blocks[1].get(x, y, z) == 1) {
-                        combined.set(x + 1, y+2, z, combined.get(x+1,y+2,z) +1);
-                    }
+                    int v1 = blocks[0].get(x, y, z) + combined.get(x+1,y,z);
+                    int v2 = blocks[1].get(x, y, z) + combined.get(x+1,y+2,z);
+                    combined.set(x+1, y, z, v1);
+                    combined.set(x+1, y+2, z, v2);
                 }
             }
         }
@@ -132,12 +140,10 @@ public class Puzzle {
         for(int x=0; x<blocks.length-2; x++) {
             for(int y=0; y<blocks.length; y++) {
                 for(int z=1; z<blocks.length; z++) {
-                    if (blocks[2].get(x, y, z) == 1) {
-                        combined.set(x, y, z-1, combined.get(x, y, z-1)+1);
-                    }
-                    if (blocks[3].get(x, y, z) == 1) {
-                        combined.set(x+2, y, z-1, combined.get(x+2,y,z-1)+1);
-                    }
+                    int v1 = blocks[2].get(x, y, z) + combined.get(x,y,z-1);
+                    int v2 = blocks[3].get(x, y, z) + combined.get(x+2,y,z-1);
+                    combined.set(x, y, z-1, v1);
+                    combined.set(x+2, y, z-1, v2);
                 }
             }
         }
@@ -146,12 +152,10 @@ public class Puzzle {
         for(int x=0; x<blocks.length; x++) {
             for(int y=0; y<blocks.length-1; y++) {
                 for(int z=2; z<blocks.length; z++) {
-                    if (blocks[4].get(x, y, z) == 1) {
-                        combined.set(x, y+1, z, combined.get(x,y+1,z)+1);
-                    }
-                    if (blocks[5].get(x, y, z) == 1) {
-                        combined.set(x, y+1, z-2, combined.get(x,y+1,z-2)+1);
-                    }
+                    int v1 = blocks[4].get(x, y, z) + combined.get(x,y+1,z);
+                    int v2 = blocks[5].get(x, y, z) + combined.get(x,y+1,z-2);
+                    combined.set(x, y+1, z, v1);
+                    combined.set(x, y+1, z-2, v2);
                 }
             }
         }
@@ -160,7 +164,6 @@ public class Puzzle {
     public void paint(Graphics g, int originX, int originY) {
         // draw the solid puzzle
         // and a wireframe version showing the collisions
-        assemblePuzzle();
         combined.paint(g, originX, originY, 0 , 0 , 0, true);
         combined.paint(g, originX + 300, originY, 0 , 0 , 0, false);
     }
