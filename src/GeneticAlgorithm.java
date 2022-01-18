@@ -17,8 +17,8 @@ public class GeneticAlgorithm {
         this.tournamentSize = tournamentSize;
     }
 
-    public Population initPopulation(int chromosomeLength) {
-        return new Population(populationSize, chromosomeLength);
+    public Population initPopulation(boolean randomise) {
+        return new Population(populationSize, randomise);
     }
 
     public int calculateFitness(Individual member) {
@@ -138,7 +138,6 @@ public class GeneticAlgorithm {
         return nextGeneration;
     }
 
-
     public Population mutate(Population p) {
         // randomly mutate the genes in each individual
         Population mutatedPopulation = new Population(p.size()); // start with an empty pop
@@ -161,6 +160,18 @@ public class GeneticAlgorithm {
         return mutatedPopulation;
     }
     */
+    //TEST pretend mutate to test the rotation encoding
+    public Population mutate(Population p) {
+        Population mutatedPopulation = new Population(p.size()); // start with an empty pop
+        for (int popIndex=0; popIndex<p.size(); popIndex++) {
+            // pluck the next member from the existing population
+            Individual member = p.getIndividual(popIndex);
+            // toggle the first rotation gene for block 0
+            member.setRotationGene(0, (member.getRotationGene(0)+1) % 2);
+            mutatedPopulation.setIndividual(popIndex, member);
+        }
+        return mutatedPopulation;
+    }
 }
 
 

@@ -5,10 +5,11 @@ public class Main {
     public static void main(String[] args) throws InterruptedException {
         System.out.println("Wooden Puzzle Solver");
 
-        // TEST individual code
+        /* TEST individual code
         Individual i = new Individual();
         Puzzle p2 = new Puzzle(i);
-        //test collision counting with solid and empty blocks
+         */
+        /*TEST collision counting with solid and empty blocks
         Block solidBlock = new Block(new int[][][] {
                 {
                         {1,1,1,1},
@@ -24,18 +25,20 @@ public class Main {
         Viewer view = new Viewer(650,350);
         view.render(testP, 0, 100);
         System.out.println("Test collision counter:" + testP.collisionCount());
+         */
 
-
+        Viewer view = new Viewer(650, 350);
 
         // Create genetic algorithm
         GeneticAlgorithm ga = new GeneticAlgorithm(200, 0.05, .5, 5, 10);
 
-        // test fitness calculation
+        /* TEST fitness calculation
         System.out.println("Puzzle fitness:");
         System.out.println(ga.calculateFitness(i));
-/*
+        */
+
         // initialise the population
-        Population population = ga.initPopulation(20);
+        Population population = ga.initPopulation(true);
         // Evaluate initial pop
         ga.evaluatePopulation(population);
         int generation = 1;
@@ -49,16 +52,15 @@ public class Main {
             System.out.print(" ave fitness: " + population.getPopulationFitness());
             System.out.print(" Best so far: (" + fittest.getFitness() + "): ");
             System.out.println(fittest.toString());
+            view.render(new Puzzle(fittest), 0, 100);
 
             // TODO crossover
             //population = ga.crossover(population);
             // TODO mutate
-            //population = ga.mutate(population);
+            population = ga.mutate(population);
             // revaluate
             ga.evaluatePopulation(population);
             generation++;
         }
-
- */
     }
 }

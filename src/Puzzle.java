@@ -66,7 +66,8 @@ public class Puzzle {
                     {1,0,0,1}
             }
     });
-    private static Block[] blockSet = {b0, b1, b2, b3, b4, b5};
+    //TEST replace block 0 with block b1
+    private static Block[] blockSet = {b1, b1, b2, b3, b4, b5};
 
     private Block[] blocks;
     private Block combined;
@@ -91,13 +92,35 @@ public class Puzzle {
         // create a puzzle arrangement from a GA solution
         blocks = new Block[solution.getBlockChromosomeLength()];
         for(int i=0; i<solution.getBlockChromosomeLength(); i++) {
-            blocks[i] = blockSet[i].clone();
+            // TEST override the solution to use blank blocks for all but block 0 & 1
+            if (i>1) {
+                blocks[i] = new Block();
+            } else {
+                blocks[i] = blockSet[i].clone();
+            }
         }
-        //TODO: rotate the blocks according to the rotation chromosome
+        // rotate the blocks into their initial orientation, so that there are 2 blocks for each axis
         blocks[2].rotateYZ();
         blocks[3].rotateYZ();
         blocks[4].rotateXZ();
         blocks[5].rotateXZ();
+        // now rotate the blocks according to the rotation chromosome
+        // each block's rotation is described by 3 genes:
+        // the first 2 encode a 2-bit number to describe the number of times to rotate the block
+        // around its long axis. The 3rd bit states whether the block is also flipped 180-degrees
+        // about one of the other axes (it doesn't really matter which).
+        for (int b=0; b<1; b++) {
+            int offset = b * 3;
+            int axialRotations = solution.getRotationGene(offset) * 2 + solution.getRotationGene(offset+1); // 0 - 3 rotations
+            int longitudinal_rotations = solution.getRotationGene(offset+2) * 2; // 2 90 rotations is he same as a 180 flip
+            for (int i = 0; i < axialRotations; i++) {
+                blocks[b].rotateXY();
+            }
+            for (int i = 0; i < longitudinal_rotations; i++) {
+                blocks[b].rotateXZ();
+            }
+        }
+        // finally, superimpose all the blocks to create a single 3D array for the whole puzzle
         assemblePuzzle();
     }
 

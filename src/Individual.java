@@ -29,14 +29,16 @@ public class Individual {
         fitness = -1;
     }
 
-    public Individual() {
+    public Individual(boolean randomise) {
         // initialise with random genes
         blockChromosome = new int[BLOCK_CHROMOSOME_LENGTH];
         for (int i=0; i<BLOCK_CHROMOSOME_LENGTH; i++) {
             blockChromosome[i] = i;
         }
         rotationChromosome = new int[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-        //randomiseChromosomes();
+        if (randomise) {
+            randomiseChromosomes();
+        }
         fitness = -1;
     }
 
@@ -119,7 +121,7 @@ public class Individual {
             if (Math.random() <0.5) {
                 setRotationGene(i, 0);
             } else {
-                setRotationGene(i, 0);
+                setRotationGene(i, 1);
             }
         }
     }

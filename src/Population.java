@@ -11,11 +11,11 @@ public class Population {
         everyone = new Individual[size];
     }
 
-    public Population(int size, int chromosomeLength) {
+    public Population(int size, boolean randomise) {
         // create a pop of random individuals
         everyone = new Individual[size];
         for (int i=0; i<size; i++) {
-            Individual member = new Individual();
+            Individual member = new Individual(randomise);
             everyone[i] = member;
         }
     }

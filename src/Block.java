@@ -42,9 +42,9 @@ public class Block {
                 for(int z=0; z<blockSize; z++) {
                     if (z==0 || z==blockSize-1) {
                         // add end-cap
-                        blockArray[x+1][y+1][z] = 1;
+                        blockArray[x+2][y+2][z] = 1;
                     } else {
-                        blockArray[x + 1][y + 1][z] = shape[x][y][z-1];
+                        blockArray[x+2][y+2][z] = shape[x][y][z-1];
                     }
                 }
             }
