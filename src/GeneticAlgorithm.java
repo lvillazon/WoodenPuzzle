@@ -24,7 +24,7 @@ public class GeneticAlgorithm {
     public int calculateFitness(Individual member) {
         // total number of overlapping cubes in the puzzle
         Puzzle p = new Puzzle(member);
-        int fitness = p.collisionCount();
+        int fitness = 40-p.collisionCount(); // a collision count of 40 represents total overlap ie worst case
         member.setFitness(fitness);
         return fitness;
     }
@@ -160,18 +160,49 @@ public class GeneticAlgorithm {
         return mutatedPopulation;
     }
     */
-    //TEST pretend mutate to test the rotation encoding
+    // mutate the rotation chromosome using random bit flipping
+    public Population mutate(Population p) {
+        // randomly mutate the genes in each individual
+        Population mutatedPopulation = new Population(p.size()); // start with an empty pop
+        p.sortByFitness();
+        for (int popIndex=0; popIndex<p.size(); popIndex++) {
+            // pluck the next member from the existing population
+            Individual member = p.getIndividual(popIndex);
+            // chance to mutate each gene in the chromosome (but not for elites)
+            for (int locus = 0; locus < member.getRotationChromosomeLength(); locus++) {
+                if (Math.random() < mutationRate && popIndex >= elitismCount) {
+                    // flip gene at this locus
+                    int newGene = (member.getRotationGene(locus) + 1) % 2;
+                    member.setRotationGene(locus, newGene);
+                }
+            }
+            mutatedPopulation.setIndividual(popIndex, member);
+        }
+        return mutatedPopulation;
+    }
+
+/*  TEST mutation by cycling the possible alleles
     public Population mutate(Population p) {
         Population mutatedPopulation = new Population(p.size()); // start with an empty pop
         for (int popIndex=0; popIndex<p.size(); popIndex++) {
             // pluck the next member from the existing population
             Individual member = p.getIndividual(popIndex);
-            // toggle the first rotation gene for block 0
-            member.setRotationGene(0, (member.getRotationGene(0)+1) % 2);
+
+            // cycle rotation genes 1 & 2 for block 4
+            // 0 1 2 = 0
+            // 3 4 5 = 1
+            int rotValue = member.getRotationGene(13) + member.getRotationGene(12)*2;
+            rotValue = (rotValue+1)%4;
+            member.setRotationGene(12, rotValue/2);
+            member.setRotationGene(13, rotValue%2);
+            // toggle the longitudinal rotation gene
+            member.setRotationGene(14, (member.getRotationGene(14)+1)%2);
             mutatedPopulation.setIndividual(popIndex, member);
         }
         return mutatedPopulation;
     }
+
+ */
 }
 
 

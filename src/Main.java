@@ -30,7 +30,7 @@ public class Main {
         Viewer view = new Viewer(650, 350);
 
         // Create genetic algorithm
-        GeneticAlgorithm ga = new GeneticAlgorithm(200, 0.05, .5, 5, 10);
+        GeneticAlgorithm ga = new GeneticAlgorithm(200, 0.5, .95, 5, 10);
 
         /* TEST fitness calculation
         System.out.println("Puzzle fitness:");
@@ -61,6 +61,7 @@ public class Main {
             // revaluate
             ga.evaluatePopulation(population);
             generation++;
+            //Thread.sleep(1000);
         }
     }
 }

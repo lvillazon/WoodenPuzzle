@@ -66,8 +66,7 @@ public class Puzzle {
                     {1,0,0,1}
             }
     });
-    //TEST replace block 0 with block b1
-    private static Block[] blockSet = {b1, b1, b2, b3, b4, b5};
+    private static Block[] blockSet = {b0, b1, b2, b3, b4, b5};
 
     private Block[] blocks;
     private Block combined;
@@ -92,12 +91,7 @@ public class Puzzle {
         // create a puzzle arrangement from a GA solution
         blocks = new Block[solution.getBlockChromosomeLength()];
         for(int i=0; i<solution.getBlockChromosomeLength(); i++) {
-            // TEST override the solution to use blank blocks for all but block 0 & 1
-            if (i>1) {
-                blocks[i] = new Block();
-            } else {
-                blocks[i] = blockSet[i].clone();
-            }
+           blocks[i] = blockSet[i].clone();
         }
         // rotate the blocks into their initial orientation, so that there are 2 blocks for each axis
         blocks[2].rotateYZ();
@@ -109,6 +103,8 @@ public class Puzzle {
         // the first 2 encode a 2-bit number to describe the number of times to rotate the block
         // around its long axis. The 3rd bit states whether the block is also flipped 180-degrees
         // about one of the other axes (it doesn't really matter which).
+        // blocks 0 & 1
+
         for (int b=0; b<1; b++) {
             int offset = b * 3;
             int axialRotations = solution.getRotationGene(offset) * 2 + solution.getRotationGene(offset+1); // 0 - 3 rotations
@@ -120,6 +116,37 @@ public class Puzzle {
                 blocks[b].rotateXZ();
             }
         }
+
+        // blocks 2 & 3
+
+        for (int b=2; b<3; b++) {
+            int offset = b * 3;
+            int axialRotations = solution.getRotationGene(offset) * 2 + solution.getRotationGene(offset+1); // 0 - 3 rotations
+            int longitudinal_rotations = solution.getRotationGene(offset+2) * 2; // 2 90 rotations is he same as a 180 flip
+            for (int i = 0; i < axialRotations; i++) {
+                blocks[b].rotateXZ();
+            }
+            for (int i = 0; i < longitudinal_rotations; i++) {
+                blocks[b].rotateXY();
+            }
+        }
+
+
+        // blocks 4 & 5
+
+        for (int b=4; b<5; b++) {
+            int offset = b * 3;
+            int axialRotations = solution.getRotationGene(offset) * 2 + solution.getRotationGene(offset + 1); // 0 - 3 rotations
+            int longitudinal_rotations = solution.getRotationGene(offset + 2) * 2; // 2 90 rotations is he same as a 180 flip
+            for (int i = 0; i < axialRotations; i++) {
+                blocks[b].rotateYZ();
+            }
+            for (int i = 0; i < longitudinal_rotations; i++) {
+                blocks[b].rotateXY();
+            }
+        }
+
+
         // finally, superimpose all the blocks to create a single 3D array for the whole puzzle
         assemblePuzzle();
     }
@@ -145,40 +172,39 @@ public class Puzzle {
     private void assemblePuzzle() {
         // copy every block into a single 3D array to create the superimposed puzzle arrangement
         // TODO: set a flag if a collision between blocks is detected
-        // copy the 2 blocks in the Z axis, blocks[0] and blocks[1]
-
         combined = new Block();
+        // copy the 2 blocks in the Z axis, blocks[0] and blocks[1]
         for(int x=0; x<blocks.length-1; x++) {
-            for(int y=0; y<blocks.length-2; y++) {
-                for(int z=0; z<blocks.length; z++) {
-                    int v1 = blocks[0].get(x, y, z) + combined.get(x+1,y,z);
-                    int v2 = blocks[1].get(x, y, z) + combined.get(x+1,y+2,z);
-                    combined.set(x+1, y, z, v1);
-                    combined.set(x+1, y+2, z, v2);
+            for (int y = 1; y < blocks.length - 1; y++) {
+                for (int z = 0; z < blocks.length; z++) {
+                    int v1 = blocks[0].get(x, y, z) + combined.get(x, y-1, z);
+                    int v2 = blocks[1].get(x, y, z) + combined.get(x, y + 1, z);
+                    combined.set(x, y-1, z, v1);
+                    combined.set(x, y + 1, z, v2);
                 }
             }
         }
 
         // copy the 2 blocks in the Y axis, blocks[2] and blocks[3]
-        for(int x=0; x<blocks.length-2; x++) {
+        for(int x=1; x<blocks.length-1; x++) {
             for(int y=0; y<blocks.length; y++) {
                 for(int z=1; z<blocks.length; z++) {
-                    int v1 = blocks[2].get(x, y, z) + combined.get(x,y,z-1);
-                    int v2 = blocks[3].get(x, y, z) + combined.get(x+2,y,z-1);
-                    combined.set(x, y, z-1, v1);
-                    combined.set(x+2, y, z-1, v2);
+                    int v1 = blocks[2].get(x, y, z) + combined.get(x-1,y,z);
+                    int v2 = blocks[3].get(x, y, z) + combined.get(x+1,y,z);
+                    combined.set(x-1, y, z, v1);
+                    combined.set(x+1, y, z, v2);
                 }
             }
         }
 
         // copy the 2 blocks in the X axis, blocks[4] and blocks[5]
         for(int x=0; x<blocks.length; x++) {
-            for(int y=0; y<blocks.length-1; y++) {
-                for(int z=2; z<blocks.length; z++) {
-                    int v1 = blocks[4].get(x, y, z) + combined.get(x,y+1,z);
-                    int v2 = blocks[5].get(x, y, z) + combined.get(x,y+1,z-2);
-                    combined.set(x, y+1, z, v1);
-                    combined.set(x, y+1, z-2, v2);
+            for(int y=0; y<blocks.length; y++) {
+                for(int z=1; z<blocks.length-1; z++) {
+                    int v1 = blocks[4].get(x, y, z) + combined.get(x,y,z+1);
+                    int v2 = blocks[5].get(x, y, z) + combined.get(x,y,z-1);
+                    combined.set(x, y, z+1, v1);
+                    combined.set(x, y, z-1, v2);
                 }
             }
         }
