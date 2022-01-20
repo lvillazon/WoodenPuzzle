@@ -10,9 +10,11 @@ public class Block {
 
     private int[][][] blockArray;
     private int blockSize;
+    private Color blockColor;
 
     public Block() {
         initialise();
+        blockColor = Color.gray;
     }
 
     private void initialise() {
@@ -29,13 +31,14 @@ public class Block {
         }
     }
 
-    public Block(int[][][] shape) {
+    public Block(int[][][] shape, Color c) {
         /* the 2x2x4 shape array only represents the middle section of each block.
            This is the part that varies from block to block. There is a solid end-cap at the long
            end of each one. This 2x2x6 block is placed in the middle of
            a 6x6x6 array, to allow easy rotation by coordinate transposition
          */
         initialise();
+        blockColor = c;
         // copy the shape array into the middle of the empty block array
         for(int x=0; x<2; x++) {
             for(int y=0; y<2; y++) {
@@ -61,6 +64,7 @@ public class Block {
                 }
             }
         }
+        copy.blockColor = blockColor;
         return copy;
     }
 
@@ -79,12 +83,12 @@ public class Block {
                     if (blockArray[x][y][z] == 1){
                         // construct and paint a cube
                         Cube cube = new Cube(originX, originY, x+offsetX, y+offsetY, z+offsetZ);
-                        cube.paint(g, solid);
+                        cube.paint(g, blockColor, solid);
                     }
                     if (blockArray[x][y][z] > 1){
                         // construct and paint a cube
                         Cube cube = new Cube(originX, originY, x+offsetX, y+offsetY, z+offsetZ);
-                        cube.paint(g, true);
+                        cube.paint(g, blockColor, true);
                     }
                 }
             }

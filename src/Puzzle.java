@@ -20,7 +20,7 @@ public class Puzzle {
                     {1,1,1,1},
                     {1,1,1,1}
             }
-    });
+    }, Color.red);
     private static Block b1 = new Block(new int[][][] {
             {
                     {1,0,0,1},
@@ -29,7 +29,7 @@ public class Puzzle {
                     {1,1,1,1},
                     {0,0,1,1}
             }
-    });
+    }, Color.orange);
     private static Block b2 = new Block(new int[][][] {
             {
                     {0,0,0,0},
@@ -38,7 +38,7 @@ public class Puzzle {
                     {1,1,1,1},
                     {1,0,0,1}
             }
-    });
+    }, Color.yellow);
     private static Block b3 = new Block(new int[][][] {
             {
                     {0,0,0,0},
@@ -47,7 +47,7 @@ public class Puzzle {
                     {1,0,0,1},
                     {1,1,1,1}
             }
-    });
+    }, Color.green);
     private static Block b4 = new Block(new int[][][] {
             {
                     {0,0,0,0},
@@ -56,7 +56,7 @@ public class Puzzle {
                     {1,1,1,1},
                     {1,1,1,1}
             }
-    });
+    }, Color.blue);
     private static Block b5 = new Block(new int[][][] {
             {
                     {0,0,1,1},
@@ -65,7 +65,7 @@ public class Puzzle {
                     {1,1,1,1},
                     {1,0,0,1}
             }
-    });
+    }, Color.magenta);
     private static Block[] blockSet = {b0, b1, b2, b3, b4, b5};
 
     private Block[] blocks;
