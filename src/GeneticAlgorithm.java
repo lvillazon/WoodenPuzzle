@@ -38,9 +38,9 @@ public class GeneticAlgorithm {
         p.setTotalFitness(totalFitness);
     }
 
-    public boolean isTerminationConditionMet(int currentGeneration, int maxGenerations) {
-        // return true once we exceed maxGenerations
-        return (currentGeneration > maxGenerations);
+    public boolean isTerminationConditionMet(Individual fittest) {
+        // return true once we find an optimal solution
+        return (fittest.fitness == 40);
     }
 
     // Roulette selection
@@ -75,9 +75,10 @@ public class GeneticAlgorithm {
         return tournament.getFittest(0);
     }
 
-    /*
+
     public Population crossover(Population p) {
-        // return a new generation using Order Crossover
+        // return a new generation using Order Crossover for the block chromosome
+        // TODO: and uniform crossover for the rotation chromosome
         Population nextGeneration = new Population(p.size()); // start with an empty pop
         p.sortByFitness();
         // loop over the existing pop
@@ -87,22 +88,14 @@ public class GeneticAlgorithm {
             if (Math.random() < crossoverRate && popIndex >= elitismCount) {
                 // find second parent
                 Individual parent2 = selectParentTournament(p);
-                // TEST dummy parent to check crossover
-                //char[] testChromosome = {'T','S','R','Q','P','O','N','M','L','K','J','I','H','G','F','E','D','C','B','A'};
-                //Individual parent2 = new Individual(testChromosome);
-
                 // create a 'blank' child
-                Individual offspring = new Individual(parent1.getChromosomeLength());
-                for (int i=0; i<offspring.getChromosomeLength(); i++) {
-                    offspring.setGene(i, '-');
-                }
-
+                Individual offspring = new Individual(false);
 
                 //********** new bit for OX *************
                 // chose the start and end of the sub-sequence
                 Random r = new Random();
-                int point1 = r.nextInt(parent1.getChromosomeLength()); // nextInt is exclusive on upper bound
-                int point2 = r.nextInt(parent1.getChromosomeLength());
+                int point1 = r.nextInt(parent1.getBlockChromosomeLength()); // nextInt is exclusive on upper bound
+                int point2 = r.nextInt(parent1.getBlockChromosomeLength());
                 // if point2 is lower, swap them over
                 if (point2 < point1) {
                     int temp = point1;
@@ -112,20 +105,20 @@ public class GeneticAlgorithm {
 
                 // copy the sub-sequence from parent1 to offspring
                 for (int i=point1; i<=point2; i++) {
-                    offspring.setGene(i, parent1.getGene(i));
+                    offspring.setBlockGene(i, parent1.getBlockGene(i));
                 }
 
                 // move to the next locus on the offspring chromosome
-                int offspringLocus = (point2 + 1) % offspring.getChromosomeLength();
+                int offspringLocus = (point2 + 1) % offspring.getBlockChromosomeLength();
                 // loop through parent2's chromosome
-                for (int i=0; i<parent2.getChromosomeLength(); i++) {
-                    int parent2Locus = (i + point2) % parent2.getChromosomeLength();
+                for (int i=0; i<parent2.getBlockChromosomeLength(); i++) {
+                    int parent2Locus = (i + point2) % parent2.getBlockChromosomeLength();
                     // copy gene if not already in offspring
-                    char gene = parent2.getGene(parent2Locus);
-                    if (!offspring.containsGene(gene)){
-                        offspring.setGene(offspringLocus, gene);
+                    int gene = parent2.getBlockGene(parent2Locus);
+                    if (!offspring.containsBlockGene(gene)){
+                        offspring.setBlockGene(offspringLocus, gene);
                         // advance to next free locus
-                        offspringLocus = (offspringLocus + 1) % offspring.getChromosomeLength();
+                        offspringLocus = (offspringLocus + 1) % offspring.getBlockChromosomeLength();
                     }
                 }
                 nextGeneration.setIndividual(popIndex, offspring);
@@ -139,36 +132,14 @@ public class GeneticAlgorithm {
     }
 
     public Population mutate(Population p) {
-        // randomly mutate the genes in each individual
-        Population mutatedPopulation = new Population(p.size()); // start with an empty pop
-        for (int popIndex=0; popIndex<p.size(); popIndex++) {
-            // pluck the next member from the existing population
-            Individual member = p.getIndividual(popIndex);
-            // chance to mutate each gene in the chromosome (but not for elites)
-            for (int locus = 0; locus < member.getChromosomeLength(); locus++) {
-                if (Math.random() < mutationRate && popIndex > elitismCount) {
-                    // swap this gene with another at random
-                    int swapLocus = (int) (Math.random() * member.getChromosomeLength());
-                    char gene1 = member.getGene(locus);
-                    char gene2 = member.getGene(swapLocus);
-                    member.setGene(locus, gene2);
-                    member.setGene(swapLocus, gene1);
-                }
-            }
-            mutatedPopulation.setIndividual(popIndex, member);
-        }
-        return mutatedPopulation;
-    }
-    */
-    // mutate the rotation chromosome using random bit flipping
-    public Population mutate(Population p) {
-        // randomly mutate the genes in each individual
+        // mutate the rotation chromosome using random bit flipping
+        // and the blockChromosome using swapping
         Population mutatedPopulation = new Population(p.size()); // start with an empty pop
         p.sortByFitness();
         for (int popIndex=0; popIndex<p.size(); popIndex++) {
             // pluck the next member from the existing population
             Individual member = p.getIndividual(popIndex);
-            // chance to mutate each gene in the chromosome (but not for elites)
+            // chance to mutate each gene in the rotation chromosome (but not for elites)
             for (int locus = 0; locus < member.getRotationChromosomeLength(); locus++) {
                 if (Math.random() < mutationRate && popIndex >= elitismCount) {
                     // flip gene at this locus
@@ -176,6 +147,18 @@ public class GeneticAlgorithm {
                     member.setRotationGene(locus, newGene);
                 }
             }
+            // chance to mutate each gene in the block chromosome (but not for elites)
+            for (int locus = 0; locus < member.getBlockChromosomeLength(); locus++) {
+                if (Math.random() < mutationRate && popIndex > elitismCount) {
+                    // swap this gene with another at random
+                    int swapLocus = (int) (Math.random() * member.getBlockChromosomeLength());
+                    int gene1 = member.getBlockGene(locus);
+                    int gene2 = member.getBlockGene(swapLocus);
+                    member.setBlockGene(locus, gene2);
+                    member.setBlockGene(swapLocus, gene1);
+                }
+            }
+
             mutatedPopulation.setIndividual(popIndex, member);
         }
         return mutatedPopulation;

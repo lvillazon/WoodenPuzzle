@@ -30,7 +30,7 @@ public class Main {
         Viewer view = new Viewer(650, 350);
 
         // Create genetic algorithm
-        GeneticAlgorithm ga = new GeneticAlgorithm(200, 0.5, .95, 5, 10);
+        GeneticAlgorithm ga = new GeneticAlgorithm(200, 0.05, .95, 0, 10);
 
         /* TEST fitness calculation
         System.out.println("Puzzle fitness:");
@@ -45,18 +45,20 @@ public class Main {
 
         // start evolving
         Individual currentBest = population.getFittest(0);
-        while (ga.isTerminationConditionMet(generation, maxGenerations) == false) {
+        while (ga.isTerminationConditionMet(currentBest) == false) {
             // show best solution so far
-            Individual fittest = population.getFittest(0);
+            currentBest = population.getFittest(100);
             System.out.print("gen " + generation);
             System.out.print(" ave fitness: " + population.getPopulationFitness());
-            System.out.print(" Best so far: (" + fittest.getFitness() + "): ");
-            System.out.println(fittest.toString());
-            view.render(new Puzzle(fittest), 0, 100);
+            System.out.print(" Best so far: (" + currentBest.getFitness() + "): ");
+            System.out.print(currentBest);
+            System.out.print(" worst so far: (" + population.getFittest(population.size()-1).getFitness() + "): ");
+            System.out.println(population.getIndividual(population.size()-1));
+            view.render(new Puzzle(currentBest), 0, 100);
 
-            // TODO crossover
+            //TODO crossover - block crossover implemented but not rotation crossover
             //population = ga.crossover(population);
-            // TODO mutate
+            // mutate
             population = ga.mutate(population);
             // revaluate
             ga.evaluatePopulation(population);

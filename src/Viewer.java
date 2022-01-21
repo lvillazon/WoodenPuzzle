@@ -49,20 +49,8 @@ class Viewer extends JComponent {
     }
 
     public void paint(Graphics g) {
-        //display a test block
-        p.paint(g, originX, originY);
-
-        // draw and display some test cubes
-        /*
-        Cube cube1 = new Cube(100, 100, 0, 0, 0);
-        Cube cube2 = new Cube(100, 100, 1, 0, 0);
-        Cube cube3 = new Cube(100, 100, 0, 1, 0);
-        Cube cube4 = new Cube(100, 100, 0, 0, 1);
-        cube4.paint(g);
-        cube3.paint(g);
-        cube1.paint(g);
-        cube2.paint(g);
-
-         */
+        if (p !=null) {
+            p.paint(g, originX, originY);
+        }
     }
 }
