@@ -85,13 +85,13 @@ public class GeneticAlgorithm {
         for (int popIndex=0; popIndex<p.size(); popIndex++) {
             Individual parent1 = p.getIndividual(popIndex);
             // will we crossover?
-            if (Math.random() < crossoverRate && popIndex >= elitismCount) {
+            if (Math.random() < crossoverRate && popIndex > elitismCount) {
                 // find second parent
                 Individual parent2 = selectParentTournament(p);
                 // create a 'blank' child
                 Individual offspring = new Individual(false);
 
-                //********** new bit for OX *************
+                //********** OX for block chromosome *************
                 // chose the start and end of the sub-sequence
                 Random r = new Random();
                 int point1 = r.nextInt(parent1.getBlockChromosomeLength()); // nextInt is exclusive on upper bound
@@ -121,6 +121,16 @@ public class GeneticAlgorithm {
                         offspringLocus = (offspringLocus + 1) % offspring.getBlockChromosomeLength();
                     }
                 }
+
+                //********** Uniform X for rotation chromosome *************
+                for (int i=0; i<parent1.getBlockChromosomeLength(); i++) {
+                    if (r.nextInt(100) <50) {  //50% chance of choosing from p1
+                        offspring.setRotationGene(i, parent1.getRotationGene(i));
+                    } else {
+                        offspring.setRotationGene(i, parent2.getRotationGene(i));
+                    }
+                }
+
                 nextGeneration.setIndividual(popIndex, offspring);
 
             } else {
@@ -141,7 +151,7 @@ public class GeneticAlgorithm {
             Individual member = p.getIndividual(popIndex);
             // chance to mutate each gene in the rotation chromosome (but not for elites)
             for (int locus = 0; locus < member.getRotationChromosomeLength(); locus++) {
-                if (Math.random() < mutationRate && popIndex >= elitismCount) {
+                if (Math.random() < mutationRate && popIndex > elitismCount) {
                     // flip gene at this locus
                     int newGene = (member.getRotationGene(locus) + 1) % 2;
                     member.setRotationGene(locus, newGene);

@@ -30,7 +30,8 @@ public class Main {
         Viewer view = new Viewer(650, 350);
 
         // Create genetic algorithm
-        GeneticAlgorithm ga = new GeneticAlgorithm(200, 0.05, .95, 0, 10);
+        GeneticAlgorithm ga = new GeneticAlgorithm(300, 0.05, .95, 10, 20);
+        System.out.println("GA initialised");
 
         /* TEST fitness calculation
         System.out.println("Puzzle fitness:");
@@ -39,24 +40,30 @@ public class Main {
 
         // initialise the population
         Population population = ga.initPopulation(true);
+        System.out.println("population created");
         // Evaluate initial pop
         ga.evaluatePopulation(population);
+        System.out.println("initial evaluation complete");
         int generation = 1;
 
         // start evolving
         Individual currentBest = population.getFittest(0);
-        while (ga.isTerminationConditionMet(currentBest) == false) {
+        while (ga.isTerminationConditionMet(currentBest) == false || generation>10) {
             // show best solution so far
-            currentBest = population.getFittest(100);
+            currentBest = population.getFittest(0);
             System.out.print("gen " + generation);
-            System.out.print(" ave fitness: " + population.getPopulationFitness());
+            // show fitness of the fittest few individuals
+
+            System.out.print(" ave fitness: " + Math.round(population.getPopulationFitness()*100)/100);
             System.out.print(" Best so far: (" + currentBest.getFitness() + "): ");
             System.out.print(currentBest);
             System.out.print(" worst so far: (" + population.getFittest(population.size()-1).getFitness() + "): ");
             System.out.println(population.getIndividual(population.size()-1));
-            view.render(new Puzzle(currentBest), 0, 100);
 
-            //TODO crossover - block crossover implemented but not rotation crossover
+            view.render(new Puzzle(currentBest), 0, 100, false);
+
+
+            //crossover
             //population = ga.crossover(population);
             // mutate
             population = ga.mutate(population);
@@ -65,5 +72,11 @@ public class Main {
             generation++;
             //Thread.sleep(1000);
         }
+        Viewer solutionView = new Viewer(1950,350);
+        solutionView.render(new Puzzle(currentBest), 0, 100, true);
+
+        System.out.println("Finished after " + generation + " generations.");
+        System.out.print("Final fitness: (" + currentBest.getFitness() + "): ");
+        System.out.print(currentBest);
     }
 }

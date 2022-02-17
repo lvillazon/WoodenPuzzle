@@ -79,14 +79,20 @@ public class Cube {
             },4);
     }
 
-    public void paint(Graphics g, boolean solid) {
+    public void paint(Graphics g, int topColour, int frontColour, boolean solid) {
         // draw the cube on a supplied graphic context
+
+        Color[] faceColours = {Color.red, Color.orange, Color.yellow, Color.green, Color.cyan, Color.blue};
+        //System.out.println("cube cols:"+topColour+","+ frontColour);
         if (solid) {
-            g.setColor(Color.orange);
+//            g.setColor(Color.orange);
+            g.setColor(faceColours[frontColour]);
             g.fillPolygon(side1);
-            g.setColor(Color.white);
+//            g.setColor(Color.white);
+            g.setColor(faceColours[topColour]);
             g.fillPolygon(top);
-            g.setColor(Color.yellow);
+//            g.setColor(Color.yellow);
+            g.setColor(Color.white);
             g.fillPolygon(side2);
         }
         g.setColor(Color.black);

@@ -10,8 +10,15 @@ public class Block {
 
     private int[][][] blockArray;
     private int blockSize;
+    private int top;        // numbered 0 to 5, these values provide the orientation of the block
+    private int front;      // so we know what colour to use for the individual cubes
+                            // the two ends of the block are 0 and 5
+                            // and the long sides are numbered 1, 2, 3, 4
+                            // when 0 or 5 are the front, the block is facing towards the camera
 
     public Block() {
+        top = 2;
+        front = 1;
         initialise();
     }
 
@@ -35,6 +42,8 @@ public class Block {
            end of each one. This 2x2x6 block is placed in the middle of
            a 6x6x6 array, to allow easy rotation by coordinate transposition
          */
+        top = 2;
+        front = 1;
         initialise();
         // copy the shape array into the middle of the empty block array
         for(int x=0; x<2; x++) {
@@ -61,6 +70,8 @@ public class Block {
                 }
             }
         }
+        copy.front = front;
+        copy.top = top;
         return copy;
     }
 
@@ -79,12 +90,12 @@ public class Block {
                     if (blockArray[x][y][z] == 1){
                         // construct and paint a cube
                         Cube cube = new Cube(originX, originY, x+offsetX, y+offsetY, z+offsetZ);
-                        cube.paint(g, solid);
+                        cube.paint(g, top, front, solid);
                     }
                     if (blockArray[x][y][z] > 1){
                         // construct and paint a cube
                         Cube cube = new Cube(originX, originY, x+offsetX, y+offsetY, z+offsetZ);
-                        cube.paint(g, true);
+                        cube.paint(g, top, front, true);
                     }
                 }
             }
@@ -107,6 +118,24 @@ public class Block {
                 }
             }
         }
+        // this array determines the new top face after rotation
+        // which obviously depends on the current top and front faces
+        // the new front is given by frontRotation[top][front]
+        // a 9 means that this value is impossible for this orientation
+        int[][] topRotation = {
+        // front=0 1 2 3 4 5
+                {9,4,1,2,3,9}, // top = 0
+                {2,9,5,9,0,4}, // top = 1
+                {3,0,9,5,9,1}, // top = 2
+                {4,9,0,9,5,2}, // top = 3
+                {1,5,9,0,9,3}, // top = 4
+                {9,2,3,4,1,9}, // top = 5
+        };
+        int oldTop=top;
+//        System.out.print("XY: top="+top+" front="+front+"rotating to...");
+//        System.out.println("top="+topRotation[top][front]);
+        top = topRotation[top][front];
+        // front face doesn't change after XZ rotation
     }
 
     public void rotateYZ() {
@@ -125,6 +154,38 @@ public class Block {
                 }
             }
         }
+        // this array determines the new top face after rotation
+        // which obviously depends on the current top and front faces
+        // the new front/top is given by xxxRotation[top][front]
+        // a 9 means that this value is impossible for this orientation
+        int[][] topRotation = {
+        // front=0 1 2 3 4 5
+                {9,1,2,3,4,9}, // top = 0
+                {0,9,2,9,4,5}, // top = 1
+                {0,1,9,3,9,5}, // top = 2
+                {0,9,2,9,4,5}, // top = 3
+                {0,1,9,3,9,5}, // top = 4
+                {9,1,2,3,4,9}, // top = 5
+        };
+        int[][] frontRotation = {
+        // front=0 1 2 3 4 5
+                {9,5,5,5,5,9}, // top = 0
+                {3,9,3,9,3,3}, // top = 1
+                {4,4,9,4,9,4}, // top = 2
+                {1,9,1,9,1,1}, // top = 3
+                {2,2,9,2,9,2}, // top = 4
+                {9,0,0,0,0,9}, // top = 5
+        };
+        int oldFront = front;
+        int oldTop = top;
+
+//        System.out.print("YZ: top="+top+" front="+front+"rotating to...");
+//        System.out.println("top="+topRotation[oldTop][oldFront]);
+//        System.out.print("YZ: top="+top+" front="+front+"rotating to...");
+//        System.out.println("front="+frontRotation[oldTop][oldFront]);
+
+        top = topRotation[oldTop][oldFront];
+        front = frontRotation[oldTop][oldFront];
     }
 
     public void rotateXZ() {
@@ -143,6 +204,24 @@ public class Block {
                 }
             }
         }
+        // this array determines the new front face after rotation
+        // which obviously depends on the current top and front faces
+        // the new front is given by frontRotation[top][front]
+        // a 9 means that this value is impossible for this orientation
+        int[][] frontRotation = {
+                // front=0 1 2 3 4 5
+                {9,2,3,4,1,9}, // top = 0
+                {4,9,0,9,5,2}, // top = 1
+                {1,5,9,0,9,3}, // top = 2
+                {2,9,5,9,0,4}, // top = 3
+                {3,0,9,5,9,1}, // top = 4
+                {9,4,1,2,3,9}, // top = 5
+        };
+        int oldFront=front;
+//        System.out.print("XZ: top="+top+" front="+front+"rotating to...");
+//        System.out.println("front="+frontRotation[top][front]);
+        front = frontRotation[top][front];
+        // top face doesn't change after XZ rotation
     }
 
 }

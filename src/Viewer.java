@@ -9,6 +9,7 @@ class Viewer extends JComponent {
     private Puzzle p;
     private int originX;
     private int originY;
+    boolean exploded;
 
     public Viewer(int width, int height) {
         this.WIDTH = width;
@@ -33,10 +34,11 @@ class Viewer extends JComponent {
 
     }
 
-    public void render(Puzzle p, int originX, int originY) {
+    public void render(Puzzle p, int originX, int originY, boolean exploded) {
         this.p = p;
         this.originX = originX;
         this.originY = originY;
+        this.exploded = exploded;
         repaint();
     }
 
@@ -50,7 +52,7 @@ class Viewer extends JComponent {
 
     public void paint(Graphics g) {
         if (p !=null) {
-            p.paint(g, originX, originY);
+            p.paint(g, originX, originY, exploded);
         }
     }
 }

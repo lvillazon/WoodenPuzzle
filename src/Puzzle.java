@@ -35,8 +35,8 @@ public class Puzzle {
                     {0,0,0,0},
                     {0,0,0,0}},
             {
-                    {1,1,1,1},
-                    {1,0,0,1}
+                    {1,0,0,1},
+                    {1,1,1,1}
             }
     });
     private static Block b3 = new Block(new int[][][] {
@@ -57,21 +57,41 @@ public class Puzzle {
                     {1,1,1,1}
             }
     });
-    private static Block b5 = new Block(new int[][][] {
+    private static Block b5 = new Block(new int[][][]{
             {
-                    {0,0,1,1},
-                    {0,0,0,1}},
+                    {0, 0, 1, 1},
+                    {0, 0, 0, 1}},
             {
-                    {1,1,1,1},
-                    {1,0,0,1}
+                    {1, 1, 1, 1},
+                    {1, 0, 0, 1}
+            }
+    });
+    private static Block blank = new Block(new int[][][] {
+            {
+                    {0,0,0,0},
+                    {0,0,0,0}},
+            {
+                    {0,0,0,0},
+                    {0,0,0,0}
+            }
+    });
+    private static Block test = new Block(new int[][][] {
+            {
+                    {1,0,1,0},
+                    {0,1,0,1}},
+            {
+                    {0,1,0,1},
+                    {1,0,1,0}
             }
     });
     private static Block[] blockSet = {b0, b1, b2, b3, b4, b5};
+//    private static Block[] blockSet = {test,test,test,test,test,test,};
 
     private Block[] blocks;
     private Block combined;
     private int collisions;  // number of overlapping cubes in the assembled puzzle
 
+    /*
     public Puzzle(Block b1, Block b2, Block b3, Block b4, Block b5, Block b6) {
         blocks = new Block[] {
                 b1.clone(),
@@ -86,12 +106,13 @@ public class Puzzle {
         blocks[5].rotateXZ();
         assemblePuzzle();
     }
+     */
 
     public Puzzle(Individual solution) {
         // create a puzzle arrangement from a GA solution
         blocks = new Block[solution.getBlockChromosomeLength()];
         for(int i=0; i<solution.getBlockChromosomeLength(); i++) {
-           blocks[i] = blockSet[i].clone();
+           blocks[i] = blockSet[solution.getBlockGene(i)].clone();
         }
         // rotate the blocks into their initial orientation, so that there are 2 blocks for each axis
         blocks[2].rotateYZ();
@@ -103,9 +124,9 @@ public class Puzzle {
         // the first 2 encode a 2-bit number to describe the number of times to rotate the block
         // around its long axis. The 3rd bit states whether the block is also flipped 180-degrees
         // about one of the other axes (it doesn't really matter which).
-        // blocks 0 & 1
 
-        for (int b=0; b<1; b++) {
+        // blocks 0 & 1
+        for (int b=0; b<=1; b++) {
             int offset = b * 3;
             int axialRotations = solution.getRotationGene(offset) * 2 + solution.getRotationGene(offset+1); // 0 - 3 rotations
             int longitudinal_rotations = solution.getRotationGene(offset+2) * 2; // 2 90 rotations is he same as a 180 flip
@@ -118,8 +139,7 @@ public class Puzzle {
         }
 
         // blocks 2 & 3
-
-        for (int b=2; b<3; b++) {
+        for (int b=2; b<=3; b++) {
             int offset = b * 3;
             int axialRotations = solution.getRotationGene(offset) * 2 + solution.getRotationGene(offset+1); // 0 - 3 rotations
             int longitudinal_rotations = solution.getRotationGene(offset+2) * 2; // 2 90 rotations is he same as a 180 flip
@@ -131,10 +151,8 @@ public class Puzzle {
             }
         }
 
-
         // blocks 4 & 5
-
-        for (int b=4; b<5; b++) {
+        for (int b=4; b<=5; b++) {
             int offset = b * 3;
             int axialRotations = solution.getRotationGene(offset) * 2 + solution.getRotationGene(offset + 1); // 0 - 3 rotations
             int longitudinal_rotations = solution.getRotationGene(offset + 2) * 2; // 2 90 rotations is he same as a 180 flip
@@ -210,10 +228,21 @@ public class Puzzle {
         }
     }
 
-    public void paint(Graphics g, int originX, int originY) {
-        // draw the solid puzzle
-        // and a wireframe version showing the collisions
-        combined.paint(g, originX, originY, 0 , 0 , 0, true);
-        combined.paint(g, originX + 300, originY, 0 , 0 , 0, false);
+    public void paint(Graphics g, int originX, int originY, boolean exploded) {
+        if (exploded) {
+            // draw and exploded diagram representation of the puzzle blocks
+            // this allows the final solution to be viewed, so that you can reproduce it in real life
+            for (int i=0; i<blocks.length; i++) {
+                for (int j=0; j<blocks.length; j++) {
+                    blocks[j].paint(g, originX + i * 250, originY, 0, 0, 0, j==i);
+                }
+            }
+        } else {
+            // draw the solid puzzle
+            // and a wireframe version showing the collisions
+            combined.paint(g, originX, originY, 0, 0, 0, true);
+            combined.paint(g, originX + 300, originY, 0, 0, 0, false);
+        }
     }
+
 }
