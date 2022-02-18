@@ -232,11 +232,19 @@ public class Puzzle {
         if (exploded) {
             // draw and exploded diagram representation of the puzzle blocks
             // this allows the final solution to be viewed, so that you can reproduce it in real life
+            int[] xSpacing = {-50, 205, 460, 715, 715+255, 715+255+255+50};
             for (int i=0; i<blocks.length; i++) {
                 for (int j=0; j<blocks.length; j++) {
-                    blocks[j].paint(g, originX + i * 250, originY, 0, 0, 0, j==i);
+                    blocks[j].paint(g, originX + xSpacing[i], originY, 0, 0, 0, false);
                 }
             }
+            blocks[0].paint(g, originX + xSpacing[0], originY,0, -1, 0, true);
+            blocks[1].paint(g, originX + xSpacing[1], originY, 0, +1, 0, true);
+            blocks[2].paint(g, originX + xSpacing[2], originY, -1, 0, 0, true);
+            blocks[3].paint(g, originX + xSpacing[3], originY, +1, 0, 0, true);
+            blocks[4].paint(g, originX + xSpacing[4], originY, 0, 0, +1, true);
+            blocks[5].paint(g, originX + xSpacing[5], originY, 0, 0, -1, true);
+
         } else {
             // draw the solid puzzle
             // and a wireframe version showing the collisions

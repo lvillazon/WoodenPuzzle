@@ -1,8 +1,8 @@
+import java.util.Scanner;
+
 public class Main {
 
-    public static int maxGenerations = 1000;
-
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         System.out.println("Wooden Puzzle Solver");
 
         /* TEST individual code
@@ -45,20 +45,21 @@ public class Main {
         ga.evaluatePopulation(population);
         System.out.println("initial evaluation complete");
         int generation = 1;
+        int oldFitness = -1;
 
         // start evolving
         Individual currentBest = population.getFittest(0);
-        while (ga.isTerminationConditionMet(currentBest) == false || generation>10) {
+        while (!ga.isTerminationConditionMet(currentBest)) {
             // show best solution so far
             currentBest = population.getFittest(0);
             System.out.print("gen " + generation);
             // show fitness of the fittest few individuals
 
             System.out.print(" ave fitness: " + Math.round(population.getPopulationFitness()*100)/100);
-            System.out.print(" Best so far: (" + currentBest.getFitness() + "): ");
-            System.out.print(currentBest);
-            System.out.print(" worst so far: (" + population.getFittest(population.size()-1).getFitness() + "): ");
-            System.out.println(population.getIndividual(population.size()-1));
+            System.out.print(". Best so far: (" + currentBest.getFitness() + "): ");
+            System.out.println(currentBest);
+//            System.out.print(" worst so far: (" + population.getFittest(population.size()-1).getFitness() + "): ");
+//            System.out.println(population.getIndividual(population.size()-1));
 
             view.render(new Puzzle(currentBest), 0, 100, false);
 
@@ -70,7 +71,11 @@ public class Main {
             // revaluate
             ga.evaluatePopulation(population);
             generation++;
-            //Thread.sleep(1000);
+            if (currentBest.getFitness() != oldFitness) {
+                Scanner pause = new Scanner(System.in);
+                pause.nextLine();
+                oldFitness = currentBest.getFitness();
+            }
         }
         Viewer solutionView = new Viewer(1950,350);
         solutionView.render(new Puzzle(currentBest), 0, 100, true);
