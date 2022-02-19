@@ -75,6 +75,54 @@ public class GeneticAlgorithm {
         return tournament.getFittest(0);
     }
 
+    private boolean isElite(Population p, int i) {
+        return isUniqueElite(p, i);
+    }
+
+    private boolean isNonUniqueElite(Population p, int i) {
+        if (i<= elitismCount) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isUniqueElite(Population p, int i) {
+        /* calculates elitism in terms of the n fittest *unique* individuals
+           rather than just the n fittest individuals, which may all be copies of each other
+           This may help to prevent stagnation towards the end of the evolution process
+         Assuming a pop sorted by fitness:
+            start at the top and work down to i
+                if individual is different from the predescessor:
+                    increment unique count
+                    if count > elitism count:
+                        return false
+
+            if i != the previous:
+                return true
+            else:
+                return false
+        */
+        if (i == 0) {
+            return true;  // index 0 is always a unique elite, by definition
+        }
+        Individual m = p.getIndividual(i);
+        int numberOfElites = 1;
+        // count the unique elites prior to i
+        for (int popIndex=1; popIndex<i; popIndex++) {
+            if (!p.getIndividual(popIndex).equals(m)) {
+                numberOfElites++;
+                if (numberOfElites > elitismCount) {
+                    return false; // no need to check further
+                }
+            }
+        }
+        // is m actually a unique elite?
+        if (!p.getIndividual(i-1).equals(m)) {
+            return true;
+        }
+        return false;
+    }
+
 
     public Population crossover(Population p) {
         // return a new generation using Order Crossover for the block chromosome
@@ -85,7 +133,8 @@ public class GeneticAlgorithm {
         for (int popIndex=0; popIndex<p.size(); popIndex++) {
             Individual parent1 = p.getIndividual(popIndex);
             // will we crossover?
-            if (Math.random() < crossoverRate && popIndex > elitismCount) {
+          if (Math.random() < crossoverRate && !isElite(p, popIndex)) {
+//            if (Math.random() < crossoverRate && !isUniqueElite(p, popIndex)) {
                 // find second parent
                 Individual parent2 = selectParentTournament(p);
                 // create a 'blank' child
@@ -151,15 +200,15 @@ public class GeneticAlgorithm {
             Individual member = p.getIndividual(popIndex);
             // chance to mutate each gene in the rotation chromosome (but not for elites)
             for (int locus = 0; locus < member.getRotationChromosomeLength(); locus++) {
-                if (Math.random() < mutationRate && popIndex > elitismCount) {
-                    // flip gene at this locus
+                if (Math.random() < mutationRate && !isElite(p, popIndex)) {
+                        // flip gene at this locus
                     int newGene = (member.getRotationGene(locus) + 1) % 2;
                     member.setRotationGene(locus, newGene);
                 }
             }
             // chance to mutate each gene in the block chromosome (but not for elites)
             for (int locus = 0; locus < member.getBlockChromosomeLength(); locus++) {
-                if (Math.random() < mutationRate && popIndex > elitismCount) {
+                if (Math.random() < mutationRate && !isElite(p, popIndex)) {
                     // swap this gene with another at random
                     int swapLocus = (int) (Math.random() * member.getBlockChromosomeLength());
                     int gene1 = member.getBlockGene(locus);

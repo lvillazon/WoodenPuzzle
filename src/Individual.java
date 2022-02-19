@@ -94,6 +94,10 @@ public class Individual {
         return output.toString();
     }
 
+    public  boolean equals(Individual i) {
+        return toString().equals(i.toString());
+    }
+
     public boolean containsBlockGene(int gene) {
         for (int i=0; i<BLOCK_CHROMOSOME_LENGTH; i++) {
             if (blockChromosome[i] == gene) {
