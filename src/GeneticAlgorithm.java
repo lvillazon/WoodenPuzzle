@@ -76,7 +76,7 @@ public class GeneticAlgorithm {
     }
 
     private boolean isElite(Population p, int i) {
-        return isUniqueElite(p, i);
+        return isNonUniqueElite(p, i);
     }
 
     private boolean isNonUniqueElite(Population p, int i) {

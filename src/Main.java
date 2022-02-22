@@ -5,42 +5,19 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Wooden Puzzle Solver");
 
-        /* TEST individual code
-        Individual i = new Individual();
-        Puzzle p2 = new Puzzle(i);
-         */
-        /*TEST collision counting with solid and empty blocks
-        Block solidBlock = new Block(new int[][][] {
-                {
-                        {1,1,1,1},
-                        {1,1,1,1}},
-                {
-                        {1,1,1,1},
-                        {1,1,1,1}
-                }
-        });
-        Block blankBlock = new Block();
-        Puzzle solidP = new Puzzle(solidBlock, solidBlock, solidBlock, solidBlock, solidBlock, solidBlock);
-        Puzzle testP = solidP; //new Puzzle(solidBlock, solidBlock, solidBlock, blankBlock, blankBlock, blankBlock);
-        Viewer view = new Viewer(650,350);
-        view.render(testP, 0, 100);
-        System.out.println("Test collision counter:" + testP.collisionCount());
-         */
+        int runs = 1;
+        int totalGenerations =0;
+        boolean uniqueElites = false;
+        boolean pause = true;
 
         Viewer view = new Viewer(650, 350);
 
-        int runs = 1;
-        int totalGenerations =0;
+        Individual currentBest = null;
         for(int q=0; q<runs; q++) {
 
             // Create genetic algorithm
-            GeneticAlgorithm ga = new GeneticAlgorithm(300, 0.05, .95, 10, 20);
+            GeneticAlgorithm ga = new GeneticAlgorithm(200, 0.05, .95, 1, 10);
             System.out.println("GA initialised");
-
-            /* TEST fitness calculation
-            System.out.println("Puzzle fitness:");
-            System.out.println(ga.calculateFitness(i));
-            */
 
             // initialise the population
             Population population = ga.initPopulation(true);
@@ -52,11 +29,11 @@ public class Main {
             int oldFitness = -1;
 
             // start evolving
-            Individual currentBest = population.getFittest(0);
+            currentBest = population.getFittest(0);
             while (!ga.isTerminationConditionMet(currentBest)) {
                 // show best solution so far
                 currentBest = population.getFittest(0);
-                System.out.print("gen " + generation);
+                System.out.print("run " + q + ", gen " + generation);
                 // show fitness of the fittest few individuals
 
                 System.out.print(" ave fitness: " + Math.round(population.getPopulationFitness() * 100) / 100);
@@ -67,34 +44,30 @@ public class Main {
 
                 view.render(new Puzzle(currentBest), 0, 100, false);
 
-
                 //crossover
-                //population = ga.crossover(population);
+                population = ga.crossover(population);
                 // mutate
                 population = ga.mutate(population);
                 // revaluate
                 ga.evaluatePopulation(population);
                 generation++;
-    /*
-                if (currentBest.getFitness() != oldFitness) {
-                    Scanner pause = new Scanner(System.in);
-                    pause.nextLine();
+
+                if (pause && currentBest.getFitness() != oldFitness) {
+                    Scanner input = new Scanner(System.in);
+                    input.nextLine();
                     oldFitness = currentBest.getFitness();
                 }
-     */
+
             }
             System.out.println("Finished after " + generation + " generations.");
             System.out.print("Final fitness: (" + currentBest.getFitness() + "): ");
             System.out.print(currentBest);
             totalGenerations = totalGenerations + generation;
-            Viewer solutionView = new Viewer(1950,350);
-            solutionView.render(new Puzzle(currentBest), 0, 100, true);
         }
 
-
-
-
+        Viewer solutionView = new Viewer(1950,350);
+        solutionView.render(new Puzzle(currentBest), 0, 100, true);
         int ave_generations = totalGenerations/runs;
-        System.out.println("Average generations over " + runs + " trials = " + ave_generations);
+        System.out.println(" Average generations over " + runs + " trials = " + ave_generations);
     }
 }
